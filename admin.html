@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full bg-[#0B0B0B]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BLACK STORE | لوحة التحكم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            font-family: 'Cairo', sans-serif; 
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(173, 235, 255, 0.1);
+        }
+
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(173, 235, 255, 0.05);
+        }
+            
+        .glass-header {
+            background: rgba(11, 11, 11, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(173, 235, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="h-full text-white select-none overflow-x-hidden">
+
+    <div id="auth-overlay" class="fixed inset-0 z-[100] bg-[#0B0B0B]/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="w-full max-w-sm glass-panel p-6 rounded-2xl border border-gray-800 text-center space-y-4 neon-glow">
+            <div class="w-12 h-12 rounded-full bg-[#adebff]/10 border border-[#adebff]/20 flex items-center justify-center text-[#adebff] text-xl mx-auto">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <div>
+                <h2 class="text-sm font-black text-gray-200">منطقة الإدارة المحمية</h2>
+                <p class="text-[10px] text-gray-500 font-medium mt-1">يرجى إدخال رمز المرور للوصول إلى لوحة التحكم</p>
+            </div>
+            <div class="relative">
+                <input type="password" id="auth-password" placeholder="••••••••" class="w-full bg-black/40 text-center text-white text-xs border border-gray-800 rounded-xl py-3 px-4 focus:outline-none focus:border-[#adebff] transition tracking-widest">
+            </div>
+            <button id="auth-submit-btn" class="w-full bg-[#adebff] text-[#00171f] py-2.5 rounded-xl font-black text-xs active:scale-[0.98] transition shadow-lg neon-glow">
+                تأكيد الهوية ودخول اللوحة
+            </button>
+            <p id="auth-error-msg" class="text-[10px] text-red-400 font-bold hidden"><i class="bi bi-exclamation-triangle mr-1"></i> رمز المرور غير صحيح!</p>
+        </div>
+    </div>
+
+    <div id="admin-content" class="hidden">
+        <header class="fixed top-0 left-0 right-0 z-50 glass-header h-16 flex items-center justify-between px-4 md:px-8 max-w-7xl mx-auto md:rounded-b-2xl">
+            <div class="flex items-center gap-3">
+                <div class="flex flex-col text-right">
+                    <span class="text-xs font-black text-[#adebff]">لوحة التحكم</span>
+                    <span class="text-[10px] text-gray-500 font-medium">الإدارة العامة للمتجر</span>
+                </div>
+            </div>
+            <button id="logout-btn" class="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center text-xs hover:bg-red-500 hover:text-white transition active:scale-90" title="تسجيل الخروج">
+                <i class="bi bi-power"></i>
+            </button>
+            <div class="text-center hidden sm:block">
+                <h1 class="text-lg font-black tracking-wider text-white">Black<span class="text-[#adebff]">Admin</span></h1>
+            </div>
+        </header>
+
+        <div class="pt-24 pb-12 px-4 max-w-7xl mx-auto md:px-8 space-y-6">
+
+            <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between neon-glow">
+                    <div class="space-y-1 text-right">
+                        <p class="text-[10px] text-gray-400 font-bold">إجمالي المنتجات</p>
+                        <h3 id="stat-total-products" class="text-xl font-black text-white">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-[#adebff]/10 border border-[#adebff]/20 flex items-center justify-center text-[#adebff] text-lg">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between neon-glow">
+                    <div class="space-y-1 text-right">
+                        <p class="text-[10px] text-gray-400 font-bold">الأقسام النشطة</p>
+                        <h3 id="stat-total-categories" class="text-xl font-black text-amber-400">0</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-lg">
+                        <i class="bi bi-grid"></i>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between neon-glow">
+                    <div class="space-y-1 text-right">
+                        <p class="text-[10px] text-gray-400 font-bold">القيمة التقديرية للمخزون</p>
+                        <h3 id="stat-total-value" class="text-sm font-black text-emerald-400 mt-1">0 SDG</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-2xl flex items-center justify-between neon-glow">
+                    <div class="space-y-1 text-right">
+                        <p class="text-[10px] text-gray-400 font-bold">متوسط أسعار السلع</p>
+                        <h3 id="stat-average-price" class="text-sm font-black text-cyan-400 mt-1">0 SDG</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 text-lg">
+                        <i class="bi bi-database-check"></i>
+                    </div>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                
+                <section class="glass-panel p-5 rounded-2xl neon-glow border border-gray-800/60 space-y-4 lg:col-span-1">
+                    <h3 class="text-sm font-black text-[#adebff] tracking-wide flex items-center gap-2 mb-2">
+                        <span class="w-1 h-3.5 bg-[#adebff] rounded-full"></span> إضافة منتج جديد
+                    </h3>
+                    
+                    <form id="product-form" class="space-y-3.5 text-right">
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-gray-400 font-bold">اسم المنتج (يظهر للعميل)</label>
+                            <input type="text" id="prod-title" required placeholder="مثال: ببجي موبايل | 660 شدة" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-gray-400 font-bold">المعرف الفريد (ID بالإنجليزية لمنع التكرار)</label>
+                            <input type="text" id="prod-id" required placeholder="مثال: pubg-660" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-gray-400 font-bold">السعر (SDG)</label>
+                                <input type="number" id="prod-price" required placeholder="3500" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-gray-400 font-bold">القسم (Category)</label>
+                                <select id="prod-category" class="w-full bg-[#1A1A1A] text-white text-xs border border-gray-800 rounded-xl py-3 px-2 focus:outline-none focus:border-[#adebff] transition">
+                                    <option value="games">شحن ألعاب</option>
+                                    <option value="accessories">اكسسوارات الهاتف</option>
+                                    <option value="series">مسلسلات</option>
+                                    <option value="movies">افلام</option>
+                                    <option value="anime">انمي</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-gray-400 font-bold">كلمات دلالية للبحث (مفصولة بمسافة)</label>
+                            <input type="text" id="prod-keywords" required placeholder="مثال: ببجي شدات يوسي pubg uc" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-gray-400 font-bold">أيقونة المنتج (Bootstrap Icon)</label>
+                            <input type="text" id="prod-icon" placeholder="مثال: bi-nintendo-switch أو bi-fire" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-gray-400 font-bold">الشارة الترويجية (Badge اختياري)</label>
+                            <input type="text" id="prod-badge" placeholder="مثال: شحن فوري أو شائع" class="w-full bg-black/40 text-white text-xs border border-gray-800 rounded-xl py-3 px-3.5 focus:outline-none focus:border-[#adebff] transition">
+                        </div>
+
+                        <button type="submit" class="w-full bg-[#adebff] text-[#00171f] py-3 rounded-xl font-black text-xs active:scale-[0.98] transition shadow-lg neon-glow mt-2">
+                            حفظ ونشر المنتج بالمتجر <i class="bi bi-plus-circle-fill mr-1"></i>
+                        </button>
+                    </form>
+                </section>
+
+                <section class="glass-panel p-5 rounded-2xl neon-glow border border-gray-800/60 lg:col-span-2 space-y-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-sm font-black text-[#adebff] tracking-wide flex items-center gap-2">
+                            <span class="w-1 h-3.5 bg-[#adebff] rounded-full"></span> المنتجات المعروضة حالياً
+                        </h3>
+                        <span id="product-count-badge" class="text-[10px] bg-gray-800 text-gray-400 font-bold px-2 py-0.5 rounded-full">0 منتجات</span>
+                    </div>
+
+                    <div class="w-full overflow-x-auto no-scrollbar rounded-xl border border-gray-800/50">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-black/40 text-gray-400 font-bold border-b border-gray-800">
+                                <tr>
+                                    <th class="p-3">المنتج</th>
+                                    <th class="p-3">القسم</th>
+                                    <th class="p-3">السعر</th>
+                                    <th class="p-3 text-center">الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-table" class="divide-y divide-gray-800/40"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // مصفوفة المنتجات الافتراضية
+        const initialProducts = [
+            { id: 'pubg-660', title: 'ببجي موبايل | PUBG UC', category: 'games', price: 3500, keywords: 'ببجي موبايل pubg uc شدات', icon: 'bi-nintendo-switch', badge: 'شحن فوري' },
+            { id: 'ff-diamonds', title: 'جواهر فري فاير | Free Fire', category: 'games', price: 2100, keywords: 'جواهر فري فاير free fire', icon: 'bi-fire', badge: 'شائع' }
+        ];
+
+        let storeProducts = JSON.parse(localStorage.getItem('black_store_products'));
+        if (!storeProducts) {
+            storeProducts = initialProducts;
+            localStorage.setItem('black_store_products', JSON.stringify(storeProducts));
+        }
+
+        // إعدادات الحماية والأمان للوحة
+        const CORRECT_KEY = "panda@2025";
+        const authOverlay = document.getElementById('auth-overlay');
+        const adminContent = document.getElementById('admin-content');
+        const authPasswordInput = document.getElementById('auth-password');
+        const authSubmitBtn = document.getElementById('auth-submit-btn');
+        const authErrorMsg = document.getElementById('auth-error-msg');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        function checkAuth() {
+            if (sessionStorage.getItem('black_store_admin_authenticated') === 'true') {
+                authOverlay.classList.add('hidden');
+                adminContent.classList.remove('hidden');
+                renderAdminTable();
+            }
+        }
+
+        function handleLogin() {
+            if (authPasswordInput.value === CORRECT_KEY) {
+                sessionStorage.setItem('black_store_admin_authenticated', 'true');
+                authOverlay.classList.add('hidden');
+                adminContent.classList.remove('hidden');
+                authErrorMsg.classList.add('hidden');
+                renderAdminTable();
+            } else {
+                authErrorMsg.classList.remove('hidden');
+                authPasswordInput.value = '';
+                authPasswordInput.focus();
+            }
+        }
+
+        authSubmitBtn.addEventListener('click', handleLogin);
+        authPasswordInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleLogin(); });
+        
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('black_store_admin_authenticated');
+            window.location.reload();
+        });
+
+        checkAuth();
+
+        // عناصر التحكم بالجدول والفورم والإحصائيات دقيقة التحديث
+        const productForm = document.getElementById('product-form');
+        const productsTable = document.getElementById('admin-products-table');
+        const statTotalProducts = document.getElementById('stat-total-products');
+        const statTotalCategories = document.getElementById('stat-total-categories');
+        const statTotalValue = document.getElementById('stat-total-value');
+        const statAveragePrice = document.getElementById('stat-average-price');
+        const productCountBadge = document.getElementById('product-count-badge');
+
+        const categoryMap = {
+            'all': 'الكل',
+            'games': 'شحن ألعاب',
+            'accessories': 'اكسسوارات الهاتف',
+            'series': 'مسلسلات',
+            'movies': 'افلام',
+            'anime': 'انمي'
+        };
+
+        function renderAdminTable() {
+            productsTable.innerHTML = '';
+            
+            // حساب الإحصائيات الحية ديناميكياً
+            const totalCount = storeProducts.length;
+            statTotalProducts.innerText = totalCount;
+            productCountBadge.innerText = `${totalCount} منتجات`;
+
+            const activeCategories = [...new Set(storeProducts.map(p => p.category))].length;
+            statTotalCategories.innerText = activeCategories;
+
+            const totalValue = storeProducts.reduce((sum, p) => sum + p.price, 0);
+            statTotalValue.innerText = `${totalValue.toLocaleString()} SDG`;
+
+            const avgPrice = totalCount > 0 ? Math.round(totalValue / totalCount) : 0;
+            statAveragePrice.innerText = `${avgPrice.toLocaleString()} SDG`;
+
+            if (totalCount === 0) {
+                productsTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-gray-500 font-bold">لا توجد منتجات معروضة حالياً، أضف منتجك الأول!</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            storeProducts.forEach(product => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/[0.02] transition';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-200">
+                        <div class="flex items-center gap-2">
+                            <i class="bi ${product.icon || 'bi-box'} text-[#adebff] text-base"></i>
+                            <span class="truncate max-w-[140px]">${product.title}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 text-gray-400 font-medium">${categoryMap[product.category] || product.category}</td>
+                    <td class="p-3 text-[#adebff] font-black">${product.price.toLocaleString()} SDG</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteProduct('${product.id}')" class="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white transition active:scale-90">
+                            <i class="bi bi-trash3 text-xs"></i>
+                        </button>
+                    </td>
+                `;
+                productsTable.appendChild(tr);
+            });
+        }
+
+        productForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('prod-id').value.trim();
+            const title = document.getElementById('prod-title').value.trim();
+            const price = parseInt(document.getElementById('prod-price').value);
+            const category = document.getElementById('prod-category').value;
+            const keywords = document.getElementById('prod-keywords').value.toLowerCase().trim();
+            const icon = document.getElementById('prod-icon').value.trim() || 'bi-box';
+            const badge = document.getElementById('prod-badge').value.trim();
+
+            if (storeProducts.some(p => p.id === id)) {
+                alert('عذراً، هذا المعرف (ID) مستخدم بالفعل لمنتج آخر! يرجى اختيار معرف فريد.');
+                return;
+            }
+
+            storeProducts.push({ id, title, category, price, keywords, icon, badge });
+            localStorage.setItem('black_store_products', JSON.stringify(storeProducts));
+            
+            renderAdminTable();
+            productForm.reset();
+            alert('تم حفظ المنتج بنجاح ونشره في المتجر!');
+        });
+
+        window.deleteProduct = function(id) {
+            if (confirm('هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً من المتجر وقاعدة البيانات؟')) {
+                storeProducts = storeProducts.filter(p => p.id !== id);
+                localStorage.setItem('black_store_products', JSON.stringify(storeProducts));
+                renderAdminTable();
+            }
+        }
+    </script>
+</body>
+</html>
