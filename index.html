@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -96,46 +96,11 @@
             <div>
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-base md:text-lg font-bold tracking-wide flex items-center gap-2">
-                        <span class="w-1 h-4 bg-[#adebff] rounded-full"></span> المنتجات الأكثر طلباً
+                        <span class="w-1 h-4 bg-[#adebff] rounded-full"></span> المنتجات المعروضة
                     </h3>
-                    <span class="text-xs text-gray-500 font-medium cursor-pointer hover:text-[#adebff]">رؤية الكل</span>
                 </div>
                 
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5" id="products-grid">
-                    
-                    <div class="product-card bg-[#1A1A1A] rounded-2xl overflow-hidden border border-gray-800/60 flex flex-col justify-between group active:scale-[0.98] transition hover:border-[#adebff]/30" data-name="ببجي موبايل pubg uc شدات" data-category="games">
-                        <div class="relative bg-gradient-to-b from-[#00171f]/60 to-[#1A1A1A] pt-8 pb-4 px-4 flex flex-col items-center">
-                            <span class="absolute top-2 right-2 bg-[#adebff]/10 text-[#adebff] border border-[#adebff]/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">شحن فوري</span>
-                            <div class="w-16 h-16 rounded-2xl bg-black/40 flex items-center justify-center border border-[#adebff]/10 mb-3 text-3xl text-[#adebff] shadow-inner group-hover:scale-105 transition duration-300">
-                                <i class="bi bi-nintendo-switch"></i>
-                            </div>
-                            <button class="add-to-cart-btn absolute -bottom-3 left-3 w-8 h-8 rounded-full bg-[#adebff] text-[#00171f] flex items-center justify-center shadow-lg active:scale-90 transition hover:bg-white" data-id="pubg-660" data-title="ببجي موبايل | 660 شدة" data-price="3500">
-                                <i class="bi bi-bag-plus-fill text-sm"></i>
-                            </button>
-                        </div>
-                        <div class="p-3 pt-4 text-center border-t border-gray-800/40 bg-black/20">
-                            <h4 class="product-title text-xs font-bold text-gray-200 truncate">ببجي موبايل | PUBG UC</h4>
-                            <p class="text-[10px] text-[#adebff] font-black mt-1">660 شدة - 3,500 SDG</p>
-                        </div>
-                    </div>
-
-                    <div class="product-card bg-[#1A1A1A] rounded-2xl overflow-hidden border border-gray-800/60 flex flex-col justify-between group active:scale-[0.98] transition hover:border-[#adebff]/30" data-name="جواهر فري فاير free fire" data-category="games">
-                        <div class="relative bg-gradient-to-b from-[#00171f]/60 to-[#1A1A1A] pt-8 pb-4 px-4 flex flex-col items-center">
-                            <span class="absolute top-2 right-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">شائع</span>
-                            <div class="w-16 h-16 rounded-2xl bg-black/40 flex items-center justify-center border border-red-500/10 mb-3 text-3xl text-red-500 group-hover:scale-105 transition duration-300">
-                                <i class="bi bi-fire"></i>
-                            </div>
-                            <button class="add-to-cart-btn absolute -bottom-3 left-3 w-8 h-8 rounded-full bg-[#adebff] text-[#00171f] flex items-center justify-center shadow-lg active:scale-90 transition hover:bg-white" data-id="ff-diamonds" data-title="جواهر فري فاير" data-price="2100">
-                                <i class="bi bi-bag-plus-fill text-sm"></i>
-                            </button>
-                        </div>
-                        <div class="p-3 pt-4 text-center border-t border-gray-800/40 bg-black/20">
-                            <h4 class="product-title text-xs font-bold text-gray-200 truncate">جواهر فري فاير | Free Fire</h4>
-                            <p class="text-[10px] text-[#adebff] font-black mt-1">يبدأ من 2,100 SDG</p>
-                        </div>
-                    </div>
-
-                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5" id="products-grid"></div>
             </div>
         </section>
 
@@ -198,6 +163,14 @@
     </footer>
 
     <script>
+        // إعداد المنتجات والربط مع قاعدة بيانات متصفح المسؤول
+        const defaultProducts = [
+            { id: 'pubg-660', title: 'ببجي موبايل | PUBG UC', category: 'games', price: 3500, keywords: 'ببجي موبايل pubg uc شدات', icon: 'bi-nintendo-switch', badge: 'شحن فوري' },
+            { id: 'ff-diamonds', title: 'جواهر فري فاير | Free Fire', category: 'games', price: 2100, keywords: 'جواهر فري فاير free fire', icon: 'bi-fire', badge: 'شائع' }
+        ];
+
+        let storeProducts = JSON.parse(localStorage.getItem('black_store_products')) || defaultProducts;
+
         let cart = [];
 
         const cartToggleBtn = document.getElementById('cart-toggle-btn');
@@ -214,7 +187,70 @@
         const searchInput = document.getElementById('search-input');
         
         const categoryButtons = document.querySelectorAll('.category-btn');
-        const productCards = document.querySelectorAll('.product-card');
+        const productsGrid = document.getElementById('products-grid');
+
+        // دالة عرض المنتجات الحية والمزامنة
+        function renderStoreProducts(searchQuery = '', filterCategory = 'all') {
+            productsGrid.innerHTML = '';
+            
+            const filtered = storeProducts.filter(product => {
+                const matchesSearch = product.title.toLowerCase().includes(searchQuery) || 
+                                      (product.keywords && product.keywords.toLowerCase().includes(searchQuery));
+                const matchesCategory = (filterCategory === 'all' || product.category === filterCategory);
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filtered.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-span-2 sm:col-span-3 lg:col-span-4 text-center py-12 text-gray-500 text-xs font-bold">
+                        لا توجد منتجات مطابقة للبحث أو القسم حالياً.
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "product-card bg-[#1A1A1A] rounded-2xl overflow-hidden border border-gray-800/60 flex flex-col justify-between group active:scale-[0.98] transition hover:border-[#adebff]/30";
+                
+                // التحكم بلون ولواحق الشارة الترويجية إن وجدت
+                let badgeHTML = '';
+                if (product.badge) {
+                    badgeHTML = `<span class="absolute top-2 right-2 bg-[#adebff]/10 text-[#adebff] border border-[#adebff]/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">${product.badge}</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="relative bg-gradient-to-b from-[#00171f]/60 to-[#1A1A1A] pt-8 pb-4 px-4 flex flex-col items-center">
+                        ${badgeHTML}
+                        <div class="w-16 h-16 rounded-2xl bg-black/40 flex items-center justify-center border border-[#adebff]/10 mb-3 text-3xl text-[#adebff] shadow-inner group-hover:scale-105 transition duration-300">
+                            <i class="bi ${product.icon || 'bi-box'}"></i>
+                        </div>
+                        <button onclick="addToCart('${product.id}', '${product.title.replace(/'/g, "\\'")}', ${product.price})" class="absolute -bottom-3 left-3 w-8 h-8 rounded-full bg-[#adebff] text-[#00171f] flex items-center justify-center shadow-lg active:scale-90 transition hover:bg-white">
+                            <i class="bi bi-bag-plus-fill text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="p-3 pt-4 text-center border-t border-gray-800/40 bg-black/20">
+                        <h4 class="product-title text-xs font-bold text-gray-200 truncate">${product.title}</h4>
+                        <p class="text-[10px] text-[#adebff] font-black mt-1">${product.price.toLocaleString()} SDG</p>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // دالة إضافة عنصر للسلة
+        window.addToCart = function(id, title, price) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, title, price, quantity: 1 });
+            }
+            updateCartUI();
+        };
+
+        // تشغيل البناء المبدئي للمنتجات الحية
+        renderStoreProducts();
 
         function toggleCart(isOpen) {
             if (isOpen) {
@@ -230,23 +266,6 @@
         cartToggleBtn.addEventListener('click', () => toggleCart(true));
         cartCloseBtn.addEventListener('click', () => toggleCart(false));
         cartDrawer.addEventListener('click', (e) => { if(e.target === cartDrawer) toggleCart(false); });
-
-        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.getAttribute('data-id');
-                const title = btn.getAttribute('data-title');
-                const price = parseInt(btn.getAttribute('data-price'));
-
-                const existingItem = cart.find(item => item.id === id);
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                } else {
-                    cart.push({ id, title, price, quantity: 1 });
-                }
-                updateCartUI();
-            });
-        });
 
         window.changeQuantity = function(id, change) {
             const item = cart.find(i => i.id === id);
@@ -315,7 +334,6 @@
             window.open(`https://wa.me/249115169965?text=${encodedText}`, '_blank');
         });
 
-        // تم إصلاح خطأ الاسم النصي هنا
         searchToggleBtn.addEventListener('click', () => {
             if (searchBarContainer.classList.contains('hidden')) {
                 searchBarContainer.classList.remove('hidden');
@@ -329,12 +347,12 @@
             }
         });
 
-        // تم تعديل الاستهداف ليعتمد على الكلاس الديناميكي الجديد active-category
+        // تفعيل البحث الديناميكي مع الفلاتر الجديدة
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.toLowerCase().trim();
             const activeBtn = document.querySelector('.category-btn.active-category');
             const currentCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
-            filterProducts(query, currentCategory);
+            renderStoreProducts(query, currentCategory);
         });
 
         categoryButtons.forEach(btn => {
@@ -346,29 +364,12 @@
                 btn.classList.remove('bg-[#1A1A1A]', 'text-gray-400', 'border-gray-800');
                 btn.classList.add('bg-[#adebff]', 'text-[#00171f]', 'active-category');
                 
-                // تحريك تلقائي سلس لجعل القسم المختار في المنتصف عند الضغط عليه (مفيد جداً للموبايل)
                 btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 
                 const selectedCategory = btn.getAttribute('data-category');
-                filterProducts(searchInput.value.toLowerCase().trim(), selectedCategory);
+                renderStoreProducts(searchInput.value.toLowerCase().trim(), selectedCategory);
             });
         });
-
-        function filterProducts(searchQuery, category) {
-            productCards.forEach(card => {
-                const name = card.getAttribute('data-name');
-                const pCategory = card.getAttribute('data-category');
-                
-                const matchesSearch = name.includes(searchQuery);
-                const matchesCategory = (category === 'all' || pCategory === category);
-                
-                if (matchesSearch && matchesCategory) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-        }
     </script>
 </body>
 </html>
