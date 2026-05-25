@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full bg-[#0B0B0B]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BLACK STORE | بلاك استور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        body {
+            font-family: 'Cairo', sans-serif; 
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { 
+            display: none; 
+        }
+        
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none; 
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(173, 235, 255, 0.15);
+        }
+            
+        .glass-header {
+            background: rgba(11, 11, 11, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(173, 235, 255, 0.08);
+        }
+            
+        .glass-footer {
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="h-full text-white select-none overflow-x-hidden">
+
+    <header class="fixed top-0 left-0 right-0 z-50 glass-header h-16 flex items-center justify-between px-4 md:px-8 max-w-7xl mx-auto md:rounded-b-2xl">
+        <div class="flex items-center gap-3">
+            <button id="cart-toggle-btn" class="relative w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center text-gray-300 border border-gray-800 active:scale-95 transition hover:border-[#adebff]/40">
+                <i class="bi bi-cart3 text-lg"></i>
+                <span id="cart-badge" class="absolute -top-1 -left-1 bg-red-500 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center hidden animate-bounce">0</span>
+            </button>
+            <button id="search-toggle-btn" class="w-10 h-10 rounded-full bg-[#1A1A1A] flex items-center justify-center text-gray-300 border border-gray-800 active:scale-95 transition hover:border-[#adebff]/40">
+                <i class="bi bi-search text-lg"></i>
+            </button>
+        </div>
+        <div class="text-center">
+            <h1 class="text-xl font-black tracking-wider text-white">Black<span class="text-[#adebff]">Store</span></h1>
+        </div>
+    </header>
+
+    <div id="search-bar-container" class="fixed top-16 left-0 right-0 z-40 bg-[#0B0B0B]/95 backdrop-blur-md border-b border-gray-800/60 px-4 py-3 max-w-7xl mx-auto transition-all duration-300 transform -translate-y-full opacity-0 hidden">
+        <div class="relative max-w-md mx-auto">
+            <input type="text" id="search-input" placeholder="ابحث عن منتج، لعبة، أو فيلم..." class="w-full bg-[#1A1A1A] text-white text-xs border border-gray-800 rounded-xl py-3 pr-10 pl-4 focus:outline-none focus:border-[#adebff] transition">
+            <i class="bi bi-search absolute right-3.5 top-3.5 text-gray-500 text-sm"></i>
+        </div>
+    </div>
+
+    <div class="pt-24 px-4 max-w-7xl mx-auto md:px-8">
+
+        <section id="store-view" class="view-section space-y-6">
+            
+            <div class="relative w-full h-40 md:h-52 rounded-2xl overflow-hidden bg-gradient-to-br from-[#003459] via-[#00171f] to-[#1A1A1A] p-5 md:p-8 flex flex-col justify-between neon-glow border border-white/5">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(173,235,255,0.15),transparent)]"></div>
+                <div class="z-10">
+                    <span class="bg-[#adebff]/20 text-[#adebff] text-[10px] md:text-xs uppercase font-bold tracking-widest px-2.5 py-1 rounded-full border border-[#adebff]/30">عروض حصرية</span>
+                    <h2 class="text-xl md:text-3xl font-black mt-2 leading-tight">أينما كنت،<br>بلاك استور معك دائمًا</h2>
+                </div>
+                <p class="text-xs md:text-sm text-gray-300 z-10 font-medium">شحن فوري، آمن، وبأفضل الأسعار الرقمية.</p>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 md:justify-center" id="categories-container">
+                <button data-category="all" class="category-btn active-category bg-[#adebff] text-[#00171f] px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition">الكل</button>
+                <button data-category="games" class="category-btn bg-[#1A1A1A] text-gray-400 border border-gray-800 px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition hover:border-[#adebff]/30">شحن ألعاب</button>
+                <button data-category="accessories" class="category-btn bg-[#1A1A1A] text-gray-400 border border-gray-800 px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition hover:border-[#adebff]/30">اكسسوارات الهاتف</button>
+                <button data-category="series" class="category-btn bg-[#1A1A1A] text-gray-400 border border-gray-800 px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition hover:border-[#adebff]/30">مسلسلات</button>
+                <button data-category="movies" class="category-btn bg-[#1A1A1A] text-gray-400 border border-gray-800 px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition hover:border-[#adebff]/30">افلام</button>
+                <button data-category="anime" class="category-btn bg-[#1A1A1A] text-gray-400 border border-gray-800 px-5 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition hover:border-[#adebff]/30">انمي</button>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-base md:text-lg font-bold tracking-wide flex items-center gap-2">
+                        <span class="w-1 h-4 bg-[#adebff] rounded-full"></span> المنتجات المعروضة
+                    </h3>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 md:gap-5" id="products-grid"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="absolute inset-y-0 left-0 w-full max-w-sm bg-[#111] border-r border-gray-800 flex flex-col transform -translate-x-full transition-transform duration-300">
+            <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+                <h3 class="font-black text-sm flex items-center gap-2"><i class="bi bi-basket3 text-[#adebff]"></i> سلة المشتريات</h3>
+                <button id="cart-close-btn" class="text-gray-400 hover:text-white text-xl"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
+                <p id="empty-cart-msg" class="text-center text-xs text-gray-500 font-bold pt-10">السلة فارغة حالياً، أضف بعض المنتجات!</p>
+            </div>
+            <div class="p-4 border-t border-gray-800 bg-[#161616] space-y-4">
+                <div class="flex justify-between items-center text-xs font-bold">
+                    <span class="text-gray-400">الإجمالي:</span>
+                    <span id="cart-total-price" class="text-base font-black text-[#adebff]">0 SDG</span>
+                </div>
+                <button id="checkout-btn" class="w-full bg-[#adebff] text-[#00171f] py-3 rounded-xl font-black text-xs active:scale-95 transition shadow-lg neon-glow disabled:opacity-50 disabled:pointer-events-none" disabled>
+                    تأكيد الطلب عبر الواتساب <i class="bi bi-whatsapp mr-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <a href="https://wa.me/249115169965" target="_blank" class="fixed bottom-6 left-4 md:left-8 z-40 w-12 h-12 rounded-full bg-white text-[#0B0B0B] flex items-center justify-center shadow-2xl border border-gray-200/20 active:scale-90 transition neon-glow hover:bg-[#adebff]">
+        <i class="bi bi-whatsapp text-xl"></i>
+    </a>
+
+    <footer class="glass-footer mt-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-6 md:px-8 py-10 border-b border-white/5 text-right">
+            <div class="space-y-3">
+                <h2 class="text-xl font-black tracking-wider text-white">Black<span class="text-[#adebff]">Store</span></h2>
+                <p class="text-xs text-gray-400 leading-relaxed max-w-sm">
+                    بوابتك الرقمية الأولى لشحن الألعاب، بطاقات الهدايا، الاشتراكات الترفيهية، واكسسوارات الهواتف بأعلى جودة وأسرع تسليم تلقائي.
+                </p>
+            </div>
+            <div class="space-y-3">
+                <h3 class="text-sm font-bold text-[#adebff] tracking-wide">روابط مهمة</h3>
+                <ul class="space-y-2 text-xs text-gray-400 font-medium">
+                    <li><a href="#" class="hover:text-white transition flex items-center gap-1.5"><i class="bi bi-chevron-left text-[10px]"></i> شروط الخدمة والاستخدام</a></li>
+                    <li><a href="#" class="hover:text-white transition flex items-center gap-1.5"><i class="bi bi-chevron-left text-[10px]"></i> سياسة استرجاع الأموال</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <h3 class="text-sm font-bold text-[#adebff] tracking-wide">وسائل الدفع الآمنة</h3>
+                <div class="flex flex-wrap gap-2 pt-1 text-gray-400">
+                    <span class="bg-black/40 border border-gray-800 px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider flex items-center gap-1"><i class="bi bi-wallet2 text-[#adebff]"></i> بنكك / Bankak</span>
+                    <span class="bg-black/40 border border-gray-800 px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider flex items-center gap-1"><i class="bi bi-wallet2 text-[#adebff]"></i> فوري / Fawry</span>
+                    <span class="bg-black/40 border border-gray-800 px-3 py-1.5 rounded-lg text-[10px] font-black tracking-wider flex items-center gap-1"><i class="bi bi-wallet2 text-[#adebff]"></i> اووكاش / O-cash</span>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-[11px] text-gray-500 font-bold text-center md:text-right w-full">
+                &copy; 2026 <span class="text-gray-300">Black Store</span>. جميع الحقوق محفوظة. تم التطوير بكل شغف.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // إعداد المنتجات والربط مع قاعدة بيانات متصفح المسؤول
+        const defaultProducts = [
+            { id: 'pubg-660', title: 'ببجي موبايل | PUBG UC', category: 'games', price: 3500, keywords: 'ببجي موبايل pubg uc شدات', icon: 'bi-nintendo-switch', badge: 'شحن فوري' },
+            { id: 'ff-diamonds', title: 'جواهر فري فاير | Free Fire', category: 'games', price: 2100, keywords: 'جواهر فري فاير free fire', icon: 'bi-fire', badge: 'شائع' }
+        ];
+
+        let storeProducts = JSON.parse(localStorage.getItem('black_store_products')) || defaultProducts;
+
+        let cart = [];
+
+        const cartToggleBtn = document.getElementById('cart-toggle-btn');
+        const cartCloseBtn = document.getElementById('cart-close-btn');
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartDrawerContent = cartDrawer.querySelector('.transform');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartBadge = document.getElementById('cart-badge');
+        const cartTotalPrice = document.getElementById('cart-total-price');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        
+        const searchToggleBtn = document.getElementById('search-toggle-btn');
+        const searchBarContainer = document.getElementById('search-bar-container');
+        const searchInput = document.getElementById('search-input');
+        
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const productsGrid = document.getElementById('products-grid');
+
+        // دالة عرض المنتجات الحية والمزامنة
+        function renderStoreProducts(searchQuery = '', filterCategory = 'all') {
+            productsGrid.innerHTML = '';
+            
+            const filtered = storeProducts.filter(product => {
+                const matchesSearch = product.title.toLowerCase().includes(searchQuery) || 
+                                      (product.keywords && product.keywords.toLowerCase().includes(searchQuery));
+                const matchesCategory = (filterCategory === 'all' || product.category === filterCategory);
+                return matchesSearch && matchesCategory;
+            });
+
+            if (filtered.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-span-2 sm:col-span-3 lg:col-span-4 text-center py-12 text-gray-500 text-xs font-bold">
+                        لا توجد منتجات مطابقة للبحث أو القسم حالياً.
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = "product-card bg-[#1A1A1A] rounded-2xl overflow-hidden border border-gray-800/60 flex flex-col justify-between group active:scale-[0.98] transition hover:border-[#adebff]/30";
+                
+                // التحكم بلون ولواحق الشارة الترويجية إن وجدت
+                let badgeHTML = '';
+                if (product.badge) {
+                    badgeHTML = `<span class="absolute top-2 right-2 bg-[#adebff]/10 text-[#adebff] border border-[#adebff]/20 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">${product.badge}</span>`;
+                }
+
+                card.innerHTML = `
+                    <div class="relative bg-gradient-to-b from-[#00171f]/60 to-[#1A1A1A] pt-8 pb-4 px-4 flex flex-col items-center">
+                        ${badgeHTML}
+                        <div class="w-16 h-16 rounded-2xl bg-black/40 flex items-center justify-center border border-[#adebff]/10 mb-3 text-3xl text-[#adebff] shadow-inner group-hover:scale-105 transition duration-300">
+                            <i class="bi ${product.icon || 'bi-box'}"></i>
+                        </div>
+                        <button onclick="addToCart('${product.id}', '${product.title.replace(/'/g, "\\'")}', ${product.price})" class="absolute -bottom-3 left-3 w-8 h-8 rounded-full bg-[#adebff] text-[#00171f] flex items-center justify-center shadow-lg active:scale-90 transition hover:bg-white">
+                            <i class="bi bi-bag-plus-fill text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="p-3 pt-4 text-center border-t border-gray-800/40 bg-black/20">
+                        <h4 class="product-title text-xs font-bold text-gray-200 truncate">${product.title}</h4>
+                        <p class="text-[10px] text-[#adebff] font-black mt-1">${product.price.toLocaleString()} SDG</p>
+                    </div>
+                `;
+                productsGrid.appendChild(card);
+            });
+        }
+
+        // دالة إضافة عنصر للسلة
+        window.addToCart = function(id, title, price) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, title, price, quantity: 1 });
+            }
+            updateCartUI();
+        };
+
+        // تشغيل البناء المبدئي للمنتجات الحية
+        renderStoreProducts();
+
+        function toggleCart(isOpen) {
+            if (isOpen) {
+                cartDrawer.classList.remove('hidden', 'pointer-events-none', 'opacity-0');
+                setTimeout(() => cartDrawerContent.classList.remove('-translate-x-full'), 10);
+            } else {
+                cartDrawerContent.classList.add('-translate-x-full');
+                setTimeout(() => {
+                    cartDrawer.classList.add('pointer-events-none', 'opacity-0');
+                }, 300);
+            }
+        }
+        cartToggleBtn.addEventListener('click', () => toggleCart(true));
+        cartCloseBtn.addEventListener('click', () => toggleCart(false));
+        cartDrawer.addEventListener('click', (e) => { if(e.target === cartDrawer) toggleCart(false); });
+
+        window.changeQuantity = function(id, change) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            let itemCount = 0;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p id="empty-cart-msg" class="text-center text-xs text-gray-500 font-bold pt-10">السلة فارغة حالياً، أضف بعض المنتجات!</p>';
+                cartBadge.classList.add('hidden');
+                checkoutBtn.disabled = true;
+            } else {
+                cartBadge.classList.remove('hidden');
+                checkoutBtn.disabled = false;
+
+                cart.forEach(item => {
+                    total += item.price * item.quantity;
+                    itemCount += item.quantity;
+
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex items-center justify-between bg-black/40 border border-gray-800/80 rounded-xl p-3 text-xs';
+                    itemEl.innerHTML = `
+                        <div class="space-y-1 max-w-[60%]">
+                            <h4 class="font-bold text-gray-200 truncate">${item.title}</h4>
+                            <p class="text-[#adebff] font-black">${(item.price * item.quantity).toLocaleString()} SDG</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-[#1A1A1A] border border-gray-800 rounded-lg p-1">
+                            <button onclick="window.changeQuantity('${item.id}', 1)" class="w-6 h-6 text-[#adebff] hover:bg-black/30 rounded flex items-center justify-center font-bold text-sm">+</button>
+                            <span class="font-black px-1">${item.quantity}</span>
+                            <button onclick="window.changeQuantity('${item.id}', -1)" class="w-6 h-6 text-red-400 hover:bg-black/30 rounded flex items-center justify-center font-bold text-sm">-</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(itemEl);
+                });
+            }
+
+            cartBadge.innerText = itemCount;
+            cartTotalPrice.innerText = `${total.toLocaleString()} SDG`;
+        }
+
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) return;
+            
+            let message = `مرحباً بلاك استور، أود تقديم طلب شراء المنتجات التالية:\n\n`;
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                message += `${index + 1}. *${item.title}* - الكمية: ${item.quantity} - السعر: ${(item.price * item.quantity).toLocaleString()} SDG\n`;
+                total += item.price * item.quantity;
+            });
+            
+            message += `\n💰 *الإجمالي الكلي:* ${total.toLocaleString()} SDG\n`;
+            message += `طريقة الدفع المطلوب الشحن بها: تطبيق بنكك 💳`;
+            
+            const encodedText = encodeURIComponent(message);
+            window.open(`https://wa.me/249115169965?text=${encodedText}`, '_blank');
+        });
+
+        searchToggleBtn.addEventListener('click', () => {
+            if (searchBarContainer.classList.contains('hidden')) {
+                searchBarContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    searchBarContainer.classList.remove('-translate-y-full', 'opacity-0');
+                    searchInput.focus();
+                }, 10);
+            } else {
+                searchBarContainer.classList.add('-translate-y-full', 'opacity-0');
+                setTimeout(() => searchBarContainer.classList.add('hidden'), 300);
+            }
+        });
+
+        // تفعيل البحث الديناميكي مع الفلاتر الجديدة
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            const activeBtn = document.querySelector('.category-btn.active-category');
+            const currentCategory = activeBtn ? activeBtn.getAttribute('data-category') : 'all';
+            renderStoreProducts(query, currentCategory);
+        });
+
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryButtons.forEach(b => {
+                    b.classList.remove('bg-[#adebff]', 'text-[#00171f]', 'active-category');
+                    b.classList.add('bg-[#1A1A1A]', 'text-gray-400', 'border-gray-800');
+                });
+                btn.classList.remove('bg-[#1A1A1A]', 'text-gray-400', 'border-gray-800');
+                btn.classList.add('bg-[#adebff]', 'text-[#00171f]', 'active-category');
+                
+                btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+                const selectedCategory = btn.getAttribute('data-category');
+                renderStoreProducts(searchInput.value.toLowerCase().trim(), selectedCategory);
+            });
+        });
+    </script>
+</body>
+</html>
+
