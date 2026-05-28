@@ -3,475 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BLACK STORE ADMIN</title>
-
+<title>BLACK STORE | لوحة الإدارة</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Cairo',sans-serif;
-}
-
-body{
-background:#0b0b0b;
-color:white;
-overflow-x:hidden;
-}
-
-::-webkit-scrollbar{
-width:5px;
-}
-
-::-webkit-scrollbar-thumb{
-background:#adebff;
-border-radius:20px;
-}
-
-.glass{
-background:rgba(17,17,17,0.95);
-backdrop-filter:blur(12px);
-}
-
-.card{
-background:#131313;
-border:1px solid #222;
-transition:0.3s ease;
-}
-
-.card:hover{
-border-color:#adebff;
-transform:translateY(-3px);
-}
-
-.input{
-width:100%;
-background:#0f0f0f;
-border:1px solid #333;
-color:white;
-padding:12px;
-border-radius:14px;
-outline:none;
-}
-
-.input:focus{
-border-color:#adebff;
-}
-
-.btn-primary{
-background:#adebff;
-color:black;
-font-weight:800;
-padding:12px;
-border-radius:14px;
-transition:0.3s;
-}
-
-.btn-primary:hover{
-background:white;
-}
-
-.btn-danger{
-background:#ef4444;
-color:white;
-padding:10px 14px;
-border-radius:10px;
-}
-
-.btn-warning{
-background:#f59e0b;
-color:black;
-padding:10px 14px;
-border-radius:10px;
-}
-
-.hidden-panel{
-display:none;
-}
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo',sans-serif; }
+  body { background:#0b0b0b; color:white; overflow-x:hidden; }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-thumb { background:#adebff; border-radius:20px; }
+  .glass { background:rgba(17,17,17,0.95); backdrop-filter:blur(12px); }
+  .card { background:#131313; border:1px solid #222; transition:0.3s ease; }
+  .card:hover { border-color:#adebff; transform:translateY(-3px); }
+  .input { width:100%; background:#0f0f0f; border:1px solid #333; color:white; padding:12px; border-radius:14px; outline:none; }
+  .input:focus { border-color:#adebff; }
+  .btn-primary { background:#adebff; color:black; font-weight:800; padding:12px; border-radius:14px; transition:0.3s; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-primary:hover { background:white; }
+  .btn-danger { background:#ef4444; color:white; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
+  .btn-warning { background:#f59e0b; color:black; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
+  .hidden-panel { display:none; }
 </style>
 </head>
 <body>
 
 <!-- LOGIN SCREEN -->
 <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
-<div class="glass border border-gray-800 rounded-3xl p-8 w-full max-w-md shadow-2xl">
-
-<div class="text-center mb-8">
-<h1 class="text-4xl font-black">BLACK <span class="text-[#adebff]">STORE</span></h1>
-<p class="text-gray-400 mt-3 text-sm">لوحة تحكم المسؤول</p>
-</div>
-
-<div class="space-y-4">
-<div>
-<label class="text-sm text-gray-300 mb-2 block">اسم المستخدم</label>
-<input type="text" id="username" class="input" placeholder="اسم المستخدم">
-</div>
-
-<div>
-<label class="text-sm text-gray-300 mb-2 block">كلمة المرور</label>
-<input type="password" id="password" class="input" placeholder="كلمة المرور">
-</div>
-
-<button onclick="login()" class="btn-primary w-full">
-<i class="bi bi-shield-lock-fill"></i>
-تسجيل الدخول
-</button>
-</div>
-
-<p id="loginError" class="text-red-400 text-sm mt-4 text-center hidden">بيانات الدخول غير صحيحة</p>
-
-</div>
+  <div class="glass border border-gray-800 rounded-3xl p-8 w-full max-w-md shadow-2xl">
+    <div class="text-center mb-8"><h1 class="text-4xl font-black">BLACK <span class="text-[#adebff]">STORE</span></h1><p class="text-gray-400 mt-3 text-sm">لوحة تحكم المسؤول</p></div>
+    <div class="space-y-4">
+      <div><label class="text-sm text-gray-300 mb-2 block">اسم المستخدم</label><input type="text" id="username" class="input" placeholder="اسم المستخدم"></div>
+      <div><label class="text-sm text-gray-300 mb-2 block">كلمة المرور</label><input type="password" id="password" class="input" placeholder="كلمة المرور"></div>
+      <button onclick="login()" class="btn-primary w-full"><i class="bi bi-shield-lock-fill"></i>تسجيل الدخول</button>
+    </div>
+    <p id="loginError" class="text-red-400 text-sm mt-4 text-center hidden">بيانات الدخول غير صحيحة</p>
+  </div>
 </div>
 
 <!-- ADMIN PANEL -->
 <div id="adminPanel" class="hidden-panel">
-
-<!-- HEADER -->
-<header class="sticky top-0 z-50 glass border-b border-gray-800">
-<div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-
-<div>
-<h1 class="text-2xl font-black">BLACK <span class="text-[#adebff]">STORE</span></h1>
-<p class="text-gray-400 text-xs">لوحة إدارة المتجر</p>
-</div>
-
-<div class="flex items-center gap-3">
-<button onclick="exportExcel()" class="btn-primary text-sm px-4 py-2">
-<i class="bi bi-file-earmark-excel-fill"></i>
-تصدير Excel
-</button>
-
-<label class="btn-primary text-sm px-4 py-2 cursor-pointer">
-<i class="bi bi-upload"></i>
-استيراد JSON
-<input type="file" id="importJSON" accept=".json" hidden>
-</label>
-
-<button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold">
-<i class="bi bi-box-arrow-right"></i>
-خروج
-</button>
-</div>
-
-</div>
-</header>
-
-<!-- CONTENT -->
-<div class="max-w-7xl mx-auto p-4 space-y-6">
-
-<!-- STATS -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-<div class="card rounded-2xl p-5">
-<p class="text-gray-400 text-sm">عدد المنتجات</p>
-<h2 id="productsCount" class="text-4xl font-black text-[#adebff] mt-2">0</h2>
-</div>
-
-<div class="card rounded-2xl p-5">
-<p class="text-gray-400 text-sm">التصنيفات</p>
-<h2 class="text-4xl font-black text-[#adebff] mt-2">5</h2>
-</div>
-
-<div class="card rounded-2xl p-5">
-<p class="text-gray-400 text-sm">حالة النظام</p>
-<h2 class="text-2xl font-black text-green-400 mt-3">ONLINE</h2>
-</div>
-
-</div>
-
-<!-- ADD PRODUCT -->
-<div class="card rounded-3xl p-6">
-<div class="flex items-center gap-3 mb-6">
-<i class="bi bi-plus-circle-fill text-[#adebff] text-2xl"></i>
-<h2 class="text-2xl font-black">إضافة منتج</h2>
-</div>
-
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<input type="text" id="productName" class="input" placeholder="اسم المنتج">
-<input type="number" id="productPrice" class="input" placeholder="السعر">
-
-<select id="productCategory" class="input">
-<option value="games">شحن ألعاب</option>
-<option value="movies">أفلام</option>
-<option value="anime">أنمي</option>
-<option value="series">مسلسلات</option>
-<option value="accessories">إكسسوارات</option>
-</select>
-
-<input type="text" id="productIcon" class="input" placeholder="أيقونة Bootstrap مثل bi-controller">
-</div>
-
-<textarea id="productDescription" class="input mt-4 min-h-[120px]" placeholder="وصف المنتج"></textarea>
-
-<button onclick="addProduct()" class="btn-primary mt-5 w-full">
-<i class="bi bi-plus-lg"></i>
-إضافة المنتج
-</button>
-</div>
-
-<!-- SEARCH -->
-<div class="card rounded-2xl p-4">
-<div class="relative">
-<i class="bi bi-search absolute right-4 top-4 text-gray-500"></i>
-<input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="input pr-12">
-</div>
-</div>
-
-<!-- PRODUCTS TABLE -->
-<div class="card rounded-3xl overflow-hidden">
-<div class="overflow-x-auto">
-<table class="w-full text-sm">
-<thead class="bg-[#111] border-b border-gray-800">
-<tr>
-<th class="p-4 text-right">المنتج</th>
-<th class="p-4 text-right">السعر</th>
-<th class="p-4 text-right">التصنيف</th>
-<th class="p-4 text-right">الأيقونة</th>
-<th class="p-4 text-right">الإجراءات</th>
-</tr>
-</thead>
-<tbody id="productsTable"></tbody>
-</table>
-</div>
-</div>
-
-</div>
+  <header class="sticky top-0 z-50 glass border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-3">
+      <div><h1 class="text-2xl font-black">BLACK <span class="text-[#adebff]">STORE</span></h1><p class="text-gray-400 text-xs">لوحة إدارة المتجر</p></div>
+      <div class="flex items-center gap-3 flex-wrap">
+        <button onclick="exportExcel()" class="btn-primary text-sm px-4 py-2"><i class="bi bi-file-earmark-excel-fill"></i>تصدير Excel</button>
+        <label class="btn-primary text-sm px-4 py-2 cursor-pointer"><i class="bi bi-upload"></i>استيراد JSON<input type="file" id="importJSON" accept=".json" hidden></label>
+        <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2"><i class="bi bi-box-arrow-right"></i>خروج</button>
+      </div>
+    </div>
+  </header>
+  <div class="max-w-7xl mx-auto p-4 space-y-6">
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="card rounded-2xl p-5"><p class="text-gray-400 text-sm">عدد المنتجات</p><h2 id="productsCount" class="text-4xl font-black text-[#adebff] mt-2">0</h2></div>
+      <div class="card rounded-2xl p-5"><p class="text-gray-400 text-sm">التصنيفات</p><h2 class="text-4xl font-black text-[#adebff] mt-2">5</h2></div>
+      <div class="card rounded-2xl p-5 flex items-center gap-2"><i class="bi bi-wifi text-green-400 text-3xl"></i><div><p class="text-gray-400 text-sm">حالة النظام</p><h2 class="text-2xl font-black text-green-400">ONLINE</h2></div></div>
+    </div>
+    <!-- ADD PRODUCT -->
+    <div class="card rounded-3xl p-6">
+      <div class="flex items-center gap-3 mb-6"><i class="bi bi-plus-circle-fill text-[#adebff] text-2xl"></i><h2 class="text-2xl font-black">إضافة منتج</h2></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" id="productName" class="input" placeholder="اسم المنتج">
+        <input type="number" id="productPrice" class="input" placeholder="السعر">
+        <select id="productCategory" class="input"><option value="games">شحن ألعاب</option><option value="movies">أفلام</option><option value="anime">أنمي</option><option value="series">مسلسلات</option><option value="accessories">إكسسوارات</option></select>
+        <input type="text" id="productIcon" class="input" placeholder="الأيقونة (مثل bi-controller)">
+      </div>
+      <textarea id="productDescription" class="input mt-4 min-h-[100px]" placeholder="وصف المنتج"></textarea>
+      <button onclick="addProduct()" class="btn-primary mt-5 w-full"><i class="bi bi-plus-lg"></i>إضافة المنتج</button>
+    </div>
+    <!-- SEARCH -->
+    <div class="card rounded-2xl p-4"><div class="relative"><i class="bi bi-search absolute right-4 top-4 text-gray-500"></i><input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="input pr-12"></div></div>
+    <!-- PRODUCTS TABLE -->
+    <div class="card rounded-3xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-[#111] border-b border-gray-800"><tr><th class="p-4 text-right">المنتج</th><th class="p-4 text-right">السعر</th><th class="p-4 text-right">التصنيف</th><th class="p-4 text-right">الأيقونة</th><th class="p-4 text-right">الوصف</th><th class="p-4 text-right">إجراءات</th></tr></thead><tbody id="productsTable"></tbody></table></div></div>
+  </div>
 </div>
 
 <script>
-
-const ADMIN_USERNAME = 'Mazin Hassan';
-const ADMIN_PASSWORD = 'panda@2025';
-
-let products = JSON.parse(localStorage.getItem('blackstore_products')) || [
-{
- id:1,
- name:'شحن 660 شدة ببجي',
- price:4500,
- category:'games',
- icon:'bi-controller',
- description:'شحن فوري وآمن'
-},
-{
- id:2,
- name:'فيلم Interstellar',
- price:800,
- category:'movies',
- icon:'bi-film',
- description:'نسخة 4K UHD'
-}
-];
-
-function saveProducts(){
-localStorage.setItem('blackstore_products',JSON.stringify(products));
-}
-
-function login(){
-
-const username = document.getElementById('username').value;
-const password = document.getElementById('password').value;
-
-if(username === ADMIN_USERNAME && password === ADMIN_PASSWORD){
-
-localStorage.setItem('blackstore_admin_auth','true');
-
-document.getElementById('loginScreen').style.display='none';
-document.getElementById('adminPanel').style.display='block';
-
-renderProducts();
-
-}else{
-
-document.getElementById('loginError').classList.remove('hidden');
-}
-}
-
-function logout(){
-localStorage.removeItem('blackstore_admin_auth');
-location.reload();
-}
-
-function checkAuth(){
-
-const auth = localStorage.getItem('blackstore_admin_auth');
-
-if(auth === 'true'){
-
-document.getElementById('loginScreen').style.display='none';
-document.getElementById('adminPanel').style.display='block';
-
-renderProducts();
-}
-}
-
-function renderProducts(){
-
-const table = document.getElementById('productsTable');
-const search = document.getElementById('searchInput').value.toLowerCase();
-
-const filtered = products.filter(product=>
-product.name.toLowerCase().includes(search)
-);
-
-
-document.getElementById('productsCount').innerText = products.length;
-
-if(filtered.length === 0){
-
-table.innerHTML = `
-<tr>
-<td colspan="5" class="text-center p-10 text-gray-500">
-لا توجد منتجات
-</td>
-</tr>
-`;
-
-return;
-}
-
-table.innerHTML = filtered.map(product=>`
-<tr class="border-b border-gray-800 hover:bg-[#111] transition">
-<td class="p-4 font-bold">${product.name}</td>
-<td class="p-4 text-[#adebff] font-black">${product.price} SDG</td>
-<td class="p-4">${product.category}</td>
-<td class="p-4">
-<i class="bi ${product.icon} text-xl text-[#adebff]"></i>
-</td>
-<td class="p-4 flex items-center gap-2">
-<button onclick="editProduct(${product.id})" class="btn-warning">
-<i class="bi bi-pencil-fill"></i>
-</button>
-
-<button onclick="deleteProduct(${product.id})" class="btn-danger">
-<i class="bi bi-trash-fill"></i>
-</button>
-</td>
-</tr>
-`).join('');
-}
-
-function addProduct(){
-
-const name = document.getElementById('productName').value;
-const price = document.getElementById('productPrice').value;
-const category = document.getElementById('productCategory').value;
-const icon = document.getElementById('productIcon').value;
-const description = document.getElementById('productDescription').value;
-
-if(!name || !price || !icon || !description){
-alert('يرجى ملء جميع الحقول');
-return;
-}
-
-products.push({
-id:Date.now(),
-name,
-price:Number(price),
-category,
-icon,
-description
-});
-
-saveProducts();
-renderProducts();
-
-alert('تم إضافة المنتج بنجاح');
-
-
-document.getElementById('productName').value='';
-document.getElementById('productPrice').value='';
-document.getElementById('productIcon').value='';
-document.getElementById('productDescription').value='';
-}
-
-function deleteProduct(id){
-
-if(confirm('هل تريد حذف المنتج؟')){
-products = products.filter(product=>product.id !== id);
-saveProducts();
-renderProducts();
-}
-}
-
-function editProduct(id){
-
-const product = products.find(p=>p.id === id);
-
-const newName = prompt('اسم المنتج',product.name);
-if(newName === null) return;
-
-const newPrice = prompt('السعر',product.price);
-if(newPrice === null) return;
-
-product.name = newName;
-product.price = Number(newPrice);
-
-saveProducts();
-renderProducts();
-
-alert('تم تحديث المنتج');
-}
-
-// IMPORT JSON
-
-document.getElementById('importJSON').addEventListener('change',function(event){
-
-const file = event.target.files[0];
-
-if(!file) return;
-
-const reader = new FileReader();
-
-reader.onload = function(e){
-
-try{
-
-const importedProducts = JSON.parse(e.target.result);
-
-if(Array.isArray(importedProducts)){
-
-products = importedProducts;
-
-saveProducts();
-renderProducts();
-
-alert('تم استيراد المنتجات بنجاح');
-
-}else{
-alert('ملف JSON غير صالح');
-}
-
-}catch(error){
-alert('حدث خطأ أثناء قراءة الملف');
-}
-};
-
-reader.readAsText(file);
-});
-
-// EXPORT EXCEL
-function exportExcel(){
-
-const worksheet = XLSX.utils.json_to_sheet(products);
-const workbook = XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(workbook,worksheet,'Products');
-
-XLSX.writeFile(workbook,'BLACK_STORE_PRODUCTS.xlsx');
-}
-
-// SEARCH
-
-document.getElementById('searchInput').addEventListener('input',renderProducts);
-
-checkAuth();
-
+  // ---------- متزامن مع متجر العميل ----------
+  const ADMIN_USERNAME = 'Mazin Hassan';
+  const ADMIN_PASSWORD = 'panda@2025';
+  const FULL_PRODUCTS_LIST = [
+    { id: 1, name: 'شحن 660 شدة ببجي', category: 'games', price: 4500, icon: 'bi-joystick', description: 'شحن فوري وآمن - UC' },
+    { id: 2, name: 'فيلم Interstellar', category: 'movies', price: 700, icon: 'bi-film', description: '4K UHD + ترجمة' },
+    { id: 3, name: 'شحن 1500 نقطة فري فاير', category: 'games', price: 3200, icon: 'bi-controller', description: 'دائم + هدية' },
+    { id: 4, name: 'مسلسل The Last of Us', category: 'series', price: 1200, icon: 'bi-tv', description: 'الموسم الأول HD' },
+    { id: 5, name: 'أنمي Demon Slayer', category: 'anime', price: 950, icon: 'bi-gem', description: 'جميع المواسم + فيلم' },
+    { id: 6, name: 'سماعة راس gaming', category: 'accessories', price: 8700, icon: 'bi-headset', description: '7.1 محيطي إضاءة' },
+    { id: 7, name: 'فيلم Inception', category: 'movies', price: 650, icon: 'bi-camera-reels', description: 'نسخة المخرج' },
+    { id: 8, name: 'أنمي Attack on Titan', category: 'anime', price: 1100, icon: 'bi-shield-shaded', description: 'الموسم النهائي' },
+    { id: 9, name: 'مسلسل Game of Thrones', category: 'series', price: 2200, icon: 'bi-crown', description: 'جميع المواسم كاملة' },
+    { id: 10, name: 'ماوس باد احترافي', category: 'accessories', price: 3400, icon: 'bi-mouse2', description: 'كبير مضاد للانزلاق' },
+    { id: 11, name: 'شحن 500 جيمنج', category: 'games', price: 2850, icon: 'bi-dice-6', description: 'لأي لعبة عند الطلب' }
+  ];
+
+  let products = [];
+
+  function loadProductsFromStorage() {
+    const stored = localStorage.getItem('blackstore_products');
+    if (!stored) {
+      products = [...FULL_PRODUCTS_LIST];
+      localStorage.setItem('blackstore_products', JSON.stringify(products));
+    } else {
+      products = JSON.parse(stored);
+      if (products.length === 0) { products = [...FULL_PRODUCTS_LIST]; localStorage.setItem('blackstore_products', JSON.stringify(products)); }
+    }
+  }
+  function saveProducts() { localStorage.setItem('blackstore_products', JSON.stringify(products)); }
+
+  // Authentication
+  function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      localStorage.setItem('blackstore_admin_auth', 'true');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadProductsFromStorage();
+      renderProducts();
+    } else { document.getElementById('loginError').classList.remove('hidden'); }
+  }
+  function logout() { localStorage.removeItem('blackstore_admin_auth'); location.reload(); }
+  function checkAuth() {
+    const auth = localStorage.getItem('blackstore_admin_auth');
+    if (auth === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; loadProductsFromStorage(); renderProducts(); }
+  }
+
+  // Render table
+  function renderProducts() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(search));
+    document.getElementById('productsCount').innerText = products.length;
+    const tbody = document.getElementById('productsTable');
+    if (filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="text-center p-10 text-gray-500">لا توجد منتجات</td></tr>`; return; }
+    tbody.innerHTML = filtered.map(p => `<tr class="border-b border-gray-800 hover:bg-[#111] transition"><td class="p-4 font-bold">${p.name}</td><td class="p-4 text-[#adebff] font-black">${p.price} SDG</td><td class="p-4">${p.category}</td><td class="p-4"><i class="bi ${p.icon || 'bi-box'} text-xl text-[#adebff]"></i></td><td class="p-4 text-gray-300 max-w-xs truncate">${p.description}</td><td class="p-4 flex items-center gap-2"><button onclick='editProduct(${p.id})' class="btn-warning"><i class="bi bi-pencil-fill"></i> تعديل</button><button onclick='deleteProduct(${p.id})' class="btn-danger"><i class="bi bi-trash-fill"></i> حذف</button></td></tr>`).join('');
+  }
+
+  // CRUD Operations
+  function addProduct() {
+    const name = document.getElementById('productName').value.trim();
+    const price = document.getElementById('productPrice').value;
+    const category = document.getElementById('productCategory').value;
+    let icon = document.getElementById('productIcon').value.trim();
+    const description = document.getElementById('productDescription').value.trim();
+    if (!name || !price || !description) { alert('يرجى ملء جميع الحقول (الاسم، السعر، الوصف)'); return; }
+    if (!icon) icon = 'bi-box';
+    products.push({ id: Date.now(), name, price: Number(price), category, icon, description });
+    saveProducts();
+    renderProducts();
+    alert('✅ تمت إضافة المنتج بنجاح');
+    document.getElementById('productName').value = ''; document.getElementById('productPrice').value = ''; document.getElementById('productIcon').value = ''; document.getElementById('productDescription').value = '';
+  }
+
+  function deleteProduct(id) {
+    if (confirm('⚠️ هل أنت متأكد من حذف هذا المنتج نهائياً؟')) {
+      products = products.filter(p => p.id !== id);
+      saveProducts();
+      renderProducts();
+    }
+  }
+
+  function editProduct(id) {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    const newName = prompt('اسم المنتج:', product.name); if (newName === null) return;
+    const newPrice = prompt('السعر:', product.price); if (newPrice === null) return;
+    const newCategory = prompt('التصنيف (games, movies, anime, series, accessories):', product.category); if (newCategory === null) return;
+    const newIcon = prompt('أيقونة Bootstrap (مثل bi-joystick):', product.icon); if (newIcon === null) return;
+    const newDesc = prompt('وصف المنتج:', product.description); if (newDesc === null) return;
+    product.name = newName; product.price = Number(newPrice); product.category = newCategory; product.icon = newIcon || 'bi-box'; product.description = newDesc;
+    saveProducts();
+    renderProducts();
+    alert('تم تحديث المنتج');
+  }
+
+  // Import / Export
+  document.getElementById('importJSON').addEventListener('change', function(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try { const imported = JSON.parse(ev.target.result); if (Array.isArray(imported)) { products = imported; saveProducts(); renderProducts(); alert('تم استيراد المنتجات'); } else alert('الملف غير صالح'); }
+      catch(err) { alert('خطأ في قراءة الملف'); }
+    }; reader.readAsText(file);
+  });
+  function exportExcel() { const ws = XLSX.utils.json_to_sheet(products); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Products'); XLSX.writeFile(wb, 'BLACK_STORE_PRODUCTS.xlsx'); }
+
+  // Search listener
+  document.getElementById('searchInput').addEventListener('input', renderProducts);
+  checkAuth();
 </script>
-
 </body>
 </html>
