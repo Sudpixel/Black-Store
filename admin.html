@@ -22,7 +22,9 @@
   .btn-primary:hover { background:white; }
   .btn-danger { background:#ef4444; color:white; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
   .btn-warning { background:#f59e0b; color:black; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
+  .btn-secondary { background:#2d3748; color:white; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; }
   .hidden-panel { display:none; }
+  .user-badge { background:#1e293b; border-radius:40px; padding:4px 12px; font-size:12px; display:inline-flex; align-items:center; gap:6px; }
 </style>
 </head>
 <body>
@@ -46,6 +48,7 @@
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between flex-wrap gap-3">
       <div><h1 class="text-2xl font-black">BLACK <span class="text-[#adebff]">STORE</span></h1><p class="text-gray-400 text-xs">لوحة إدارة المتجر</p></div>
       <div class="flex items-center gap-3 flex-wrap">
+        <span id="userRoleBadge" class="user-badge"><i class="bi bi-person-badge"></i> <span id="currentUserSpan">مسؤول</span></span>
         <button onclick="exportExcel()" class="btn-primary text-sm px-4 py-2"><i class="bi bi-file-earmark-excel-fill"></i>تصدير Excel</button>
         <label class="btn-primary text-sm px-4 py-2 cursor-pointer"><i class="bi bi-upload"></i>استيراد JSON<input type="file" id="importJSON" accept=".json" hidden></label>
         <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2"><i class="bi bi-box-arrow-right"></i>خروج</button>
@@ -59,6 +62,23 @@
       <div class="card rounded-2xl p-5"><p class="text-gray-400 text-sm">التصنيفات</p><h2 class="text-4xl font-black text-[#adebff] mt-2">5</h2></div>
       <div class="card rounded-2xl p-5 flex items-center gap-2"><i class="bi bi-wifi text-green-400 text-3xl"></i><div><p class="text-gray-400 text-sm">حالة النظام</p><h2 class="text-2xl font-black text-green-400">ONLINE</h2></div></div>
     </div>
+
+    <!-- USER MANAGEMENT SECTION (visible only for SUPER ADMIN) -->
+    <div id="userManagementSection" class="card rounded-3xl p-6 hidden">
+      <div class="flex items-center justify-between flex-wrap gap-3 mb-6">
+        <div class="flex items-center gap-3"><i class="bi bi-people-fill text-[#adebff] text-2xl"></i><h2 class="text-2xl font-black">إدارة المسؤولين</h2></div>
+        <button onclick="showAddUserModal()" class="btn-primary text-sm"><i class="bi bi-person-plus-fill"></i> إضافة مسؤول جديد</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-[#111] border-b border-gray-800">
+            <tr><th class="p-3 text-right">اسم المستخدم</th><th class="p-3 text-right">الدور</th><th class="p-3 text-right">تاريخ الإنشاء</th><th class="p-3 text-right">إجراءات</th></tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ADD PRODUCT -->
     <div class="card rounded-3xl p-6">
       <div class="flex items-center gap-3 mb-6"><i class="bi bi-plus-circle-fill text-[#adebff] text-2xl"></i><h2 class="text-2xl font-black">إضافة منتج</h2></div>
@@ -71,17 +91,73 @@
       <textarea id="productDescription" class="input mt-4 min-h-[100px]" placeholder="وصف المنتج"></textarea>
       <button onclick="addProduct()" class="btn-primary mt-5 w-full"><i class="bi bi-plus-lg"></i>إضافة المنتج</button>
     </div>
+    
     <!-- SEARCH -->
     <div class="card rounded-2xl p-4"><div class="relative"><i class="bi bi-search absolute right-4 top-4 text-gray-500"></i><input type="text" id="searchInput" placeholder="ابحث عن منتج..." class="input pr-12"></div></div>
+    
     <!-- PRODUCTS TABLE -->
     <div class="card rounded-3xl overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-[#111] border-b border-gray-800"><tr><th class="p-4 text-right">المنتج</th><th class="p-4 text-right">السعر</th><th class="p-4 text-right">التصنيف</th><th class="p-4 text-right">الأيقونة</th><th class="p-4 text-right">الوصف</th><th class="p-4 text-right">إجراءات</th></tr></thead><tbody id="productsTable"></tbody></table></div></div>
   </div>
 </div>
 
+<!-- Modal for adding new admin -->
+<div id="addUserModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[200] hidden transition-all">
+  <div class="glass border border-gray-700 rounded-2xl p-6 w-full max-w-md">
+    <h3 class="text-xl font-black mb-4 flex items-center gap-2"><i class="bi bi-person-plus-fill text-[#adebff]"></i> إضافة مسؤول جديد</h3>
+    <input type="text" id="newUsername" class="input mb-3" placeholder="اسم المستخدم">
+    <input type="password" id="newPassword" class="input mb-4" placeholder="كلمة المرور">
+    <div class="flex gap-3">
+      <button onclick="addNewUser()" class="btn-primary flex-1">إضافة</button>
+      <button onclick="closeAddUserModal()" class="bg-gray-700 px-4 rounded-xl">إلغاء</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ---------- متزامن مع متجر العميل ----------
-  const ADMIN_USERNAME = 'Mazin Hassan';
-  const ADMIN_PASSWORD = 'panda@2025';
+  // ---------- Users & Roles System ----------
+  const SUPER_ADMIN_USERNAME = 'Mazin Hassan';
+  const SUPER_ADMIN_PASSWORD = 'panda@2025';
+
+  let users = [];      // { username, password, role, createdAt }
+  let currentUser = null; // { username, role }
+
+  function loadUsersFromStorage() {
+    const stored = localStorage.getItem('blackstore_admin_users');
+    if (!stored) {
+      users = [{
+        username: SUPER_ADMIN_USERNAME,
+        password: SUPER_ADMIN_PASSWORD,
+        role: 'super_admin',
+        createdAt: new Date().toISOString()
+      }];
+      localStorage.setItem('blackstore_admin_users', JSON.stringify(users));
+    } else {
+      users = JSON.parse(stored);
+      // تأكد من وجود السوبر ادمن دائماً
+      const superExists = users.some(u => u.username === SUPER_ADMIN_USERNAME && u.role === 'super_admin');
+      if (!superExists) {
+        users.push({
+          username: SUPER_ADMIN_USERNAME,
+          password: SUPER_ADMIN_PASSWORD,
+          role: 'super_admin',
+          createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('blackstore_admin_users', JSON.stringify(users));
+      }
+    }
+  }
+
+  function saveUsersToStorage() {
+    localStorage.setItem('blackstore_admin_users', JSON.stringify(users));
+  }
+
+  function authenticateUser(username, password) {
+    const user = users.find(u => u.username === username && u.password === password);
+    if (user) return { username: user.username, role: user.role };
+    return null;
+  }
+
+  // ---------- Products Management (same as before) ----------
   const FULL_PRODUCTS_LIST = [
     { id: 1, name: 'شحن 660 شدة ببجي', category: 'games', price: 4500, icon: 'bi-joystick', description: 'شحن فوري وآمن - UC' },
     { id: 2, name: 'فيلم Interstellar', category: 'movies', price: 700, icon: 'bi-film', description: '4K UHD + ترجمة' },
@@ -110,25 +186,7 @@
   }
   function saveProducts() { localStorage.setItem('blackstore_products', JSON.stringify(products)); }
 
-  // Authentication
-  function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      localStorage.setItem('blackstore_admin_auth', 'true');
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('adminPanel').style.display = 'block';
-      loadProductsFromStorage();
-      renderProducts();
-    } else { document.getElementById('loginError').classList.remove('hidden'); }
-  }
-  function logout() { localStorage.removeItem('blackstore_admin_auth'); location.reload(); }
-  function checkAuth() {
-    const auth = localStorage.getItem('blackstore_admin_auth');
-    if (auth === 'true') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; loadProductsFromStorage(); renderProducts(); }
-  }
-
-  // Render table
+  // Render products table
   function renderProducts() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const filtered = products.filter(p => p.name.toLowerCase().includes(search));
@@ -138,7 +196,6 @@
     tbody.innerHTML = filtered.map(p => `<tr class="border-b border-gray-800 hover:bg-[#111] transition"><td class="p-4 font-bold">${p.name}</td><td class="p-4 text-[#adebff] font-black">${p.price} SDG</td><td class="p-4">${p.category}</td><td class="p-4"><i class="bi ${p.icon || 'bi-box'} text-xl text-[#adebff]"></i></td><td class="p-4 text-gray-300 max-w-xs truncate">${p.description}</td><td class="p-4 flex items-center gap-2"><button onclick='editProduct(${p.id})' class="btn-warning"><i class="bi bi-pencil-fill"></i> تعديل</button><button onclick='deleteProduct(${p.id})' class="btn-danger"><i class="bi bi-trash-fill"></i> حذف</button></td></tr>`).join('');
   }
 
-  // CRUD Operations
   function addProduct() {
     const name = document.getElementById('productName').value.trim();
     const price = document.getElementById('productPrice').value;
@@ -187,8 +244,126 @@
   });
   function exportExcel() { const ws = XLSX.utils.json_to_sheet(products); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Products'); XLSX.writeFile(wb, 'BLACK_STORE_PRODUCTS.xlsx'); }
 
-  // Search listener
+  // ---------- User Management UI (only for super admin) ----------
+  function renderUsersTable() {
+    const tbody = document.getElementById('usersTableBody');
+    if (!tbody) return;
+    const filteredUsers = users.filter(u => u.username !== SUPER_ADMIN_USERNAME || u.role === 'super_admin'); // show all except maybe hide super? we show all
+    tbody.innerHTML = filteredUsers.map(user => `
+      <tr class="border-b border-gray-800">
+        <td class="p-3 font-medium">${user.username}</td>
+        <td class="p-3">${user.role === 'super_admin' ? '<span class="text-amber-400"><i class="bi bi-star-fill"></i> سوبر أدمن</span>' : '<span class="text-[#adebff]"><i class="bi bi-person"></i> مسؤول</span>'}</td>
+        <td class="p-3 text-gray-400 text-xs">${new Date(user.createdAt).toLocaleDateString('ar-EG')}</td>
+        <td class="p-3">${user.role !== 'super_admin' ? `<button onclick="deleteUser('${user.username}')" class="btn-danger text-xs py-1 px-2"><i class="bi bi-trash3"></i> حذف</button>` : `<span class="text-gray-500 text-xs">غير قابل للحذف</span>`}</td>
+      </tr>
+    `).join('');
+  }
+
+  function showAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('hidden');
+  }
+  function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.add('hidden');
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPassword').value = '';
+  }
+  function addNewUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const password = document.getElementById('newPassword').value.trim();
+    if (!username || !password) { alert('يرجى إدخال اسم المستخدم وكلمة المرور'); return; }
+    if (users.find(u => u.username === username)) { alert('اسم المستخدم موجود بالفعل'); return; }
+    users.push({
+      username: username,
+      password: password,
+      role: 'admin',
+      createdAt: new Date().toISOString()
+    });
+    saveUsersToStorage();
+    renderUsersTable();
+    closeAddUserModal();
+    alert(`تم إضافة المسؤول "${username}" بنجاح`);
+  }
+  function deleteUser(username) {
+    if (username === SUPER_ADMIN_USERNAME) { alert('لا يمكن حذف المسؤول الرئيسي'); return; }
+    if (confirm(`هل تريد حذف المسؤول "${username}" نهائياً؟`)) {
+      users = users.filter(u => u.username !== username);
+      saveUsersToStorage();
+      renderUsersTable();
+      alert('تم حذف المستخدم');
+    }
+  }
+
+  // ---------- Login & UI Setup ----------
+  function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const user = authenticateUser(username, password);
+    if (user) {
+      currentUser = user;
+      localStorage.setItem('blackstore_current_admin', JSON.stringify(currentUser));
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadProductsFromStorage();
+      renderProducts();
+      // Setup UI based on role
+      const userRoleSpan = document.getElementById('currentUserSpan');
+      const userRoleBadge = document.getElementById('userRoleBadge');
+      if (currentUser.role === 'super_admin') {
+        userRoleSpan.innerText = 'سوبر أدمن';
+        userRoleBadge.style.background = '#7c3aed30';
+        // show user management section
+        const userSection = document.getElementById('userManagementSection');
+        if (userSection) userSection.classList.remove('hidden');
+        renderUsersTable();
+      } else {
+        userRoleSpan.innerText = 'مسؤول';
+        userRoleBadge.style.background = '#1e293b';
+        const userSection = document.getElementById('userManagementSection');
+        if (userSection) userSection.classList.add('hidden');
+      }
+    } else {
+      document.getElementById('loginError').classList.remove('hidden');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('blackstore_current_admin');
+    currentUser = null;
+    location.reload();
+  }
+
+  function checkAuth() {
+    const storedUser = localStorage.getItem('blackstore_current_admin');
+    if (storedUser) {
+      try {
+        currentUser = JSON.parse(storedUser);
+        // verify user still exists in users array (security)
+        loadUsersFromStorage();
+        const userExists = users.find(u => u.username === currentUser.username && (u.role === currentUser.role));
+        if (!userExists) throw new Error('invalid');
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadProductsFromStorage();
+        renderProducts();
+        if (currentUser.role === 'super_admin') {
+          document.getElementById('currentUserSpan').innerText = 'سوبر أدمن';
+          const userSection = document.getElementById('userManagementSection');
+          if (userSection) userSection.classList.remove('hidden');
+          renderUsersTable();
+        } else {
+          document.getElementById('currentUserSpan').innerText = 'مسؤول';
+          const userSection = document.getElementById('userManagementSection');
+          if (userSection) userSection.classList.add('hidden');
+        }
+      } catch(e) { localStorage.removeItem('blackstore_current_admin'); }
+    }
+  }
+
+  // Initialize data & event listeners
+  loadUsersFromStorage();
   document.getElementById('searchInput').addEventListener('input', renderProducts);
+  // Close modal on outside click? simple
+  window.onclick = function(e) { if (e.target === document.getElementById('addUserModal')) closeAddUserModal(); };
   checkAuth();
 </script>
 </body>
